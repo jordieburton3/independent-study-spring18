@@ -17,7 +17,7 @@ class Header extends React.Component {
         )}
         <button onClick={async () => {
 					const payload = {
-						token: token ? JSON.parse(localStorage.getItem('jwt')).encoded : 'null'
+						token: rawToken ? JSON.parse(localStorage.getItem('jwt')).encoded : 'null'
           };
           await axios.post('/api/test', payload);
 				}}>Test</button>
