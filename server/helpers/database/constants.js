@@ -1,0 +1,12 @@
+const TEST_DB = 'jmbisdev';
+const PRODUCTION_DB = process.env.PRODUCTION_DB;
+
+const MODE_TEST = 'MODE_TEST';
+const MODE_PRODUCTION = 'MODE_PRODUCTION';
+
+module.exports = {
+    TEST_DB: TEST_DB,
+    PRODUCTION_DB: process.env.PRODUCTION_DB,
+    MODE_TEST: MODE_TEST,
+    MODE_PRODUCTION: MODE_PRODUCTION
+}
