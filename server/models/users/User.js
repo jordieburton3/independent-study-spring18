@@ -50,8 +50,7 @@ const validateUser = (email, password, done) => {
             const data = {
               passwordHash: rows[0].hash
             }
-            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 });
-            console.log(token);
+            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 15 });
             done({
               user: {
                 email: rows[0].email,

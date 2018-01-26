@@ -23,9 +23,9 @@ export default class SignUp extends React.Component {
 		return (
 			<div>
 				<form onSubmit={this.handleUserSignup}>
-					<input type="text" name="name" />
-					<input type="text" name="email" />
-					<input type="text" name="password" />
+					<input type="text" name="name" placeholder='Full Name'/>
+					<input type="text" name="email" placeholder='email'/>
+					<input type="password" name="password" placeholder='password'/>
 					<button>Register</button>
 				</form>
 			</div>

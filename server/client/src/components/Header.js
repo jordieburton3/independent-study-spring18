@@ -7,9 +7,7 @@ import axios from 'axios';
 class Header extends React.Component {
   render() {
     const rawToken = localStorage.getItem('jwt');
-    console.log(rawToken);
     const token = rawToken ? JSON.parse(rawToken) : undefined;
-    console.log(token);
     return (
       <div>
         {verifyToken(this.props.dispatch, token) ? (

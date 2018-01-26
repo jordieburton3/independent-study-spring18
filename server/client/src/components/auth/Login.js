@@ -27,8 +27,8 @@ class Login extends React.Component {
 		return (
 			<div>
 				<form onSubmit={this.handleUserAuth}>
-					<input type="text" name="email" />
-					<input type="text" name="password" />
+					<input type="text" name="email" placeholder='email'/>
+					<input type="password" name="password" placeholder='password'/>
 					<button>Submit</button>
 				</form>
 			</div>
