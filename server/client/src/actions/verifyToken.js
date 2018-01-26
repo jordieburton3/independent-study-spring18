@@ -1,11 +1,12 @@
 import moment from 'moment';
 import expireToken from './expireToken';
 
-const verifyToken = (dispatch, token) => {
+const verifyToken = (dispatch, token = { exp: 0 }) => {
     if (!token) {
         return false;
     }
-    if (token.exp < moment.now()) {
+    if (token.exp < (moment.now()/1000)) {
+        localStorage.removeItem('jwt');
         dispatch(expireToken);
         return false;
     }

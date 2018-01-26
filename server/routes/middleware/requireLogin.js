@@ -23,6 +23,7 @@ const requireLogin = (req, res, next) => {
           req.decoded = decoded;
           console.log('*********Begin decoded');
           console.log(decoded);
+          console.log(req);
           console.log('*********** End decoded');
           next();
         }

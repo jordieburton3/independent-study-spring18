@@ -16,10 +16,11 @@ class Login extends React.Component {
 			password
 		};
 		const res = await axios.post('/api/login', payload);
-        console.log(res);
-        localStorage.setItem('jwt', res.data.token);
-		console.log(localStorage.getItem('jwt'));
-		this.props.dispatch(newToken());
+		if (!res.data.errResponse) {
+			const token = JSON.stringify(res.data.token);
+       		localStorage.setItem('jwt', token);
+			this.props.dispatch(newToken());
+		}
 	};
 
 	render() {

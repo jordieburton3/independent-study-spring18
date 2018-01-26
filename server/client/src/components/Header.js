@@ -6,24 +6,22 @@ import axios from 'axios';
 
 class Header extends React.Component {
   render() {
+    const rawToken = localStorage.getItem('jwt');
+    console.log(rawToken);
+    const token = rawToken ? JSON.parse(rawToken) : undefined;
+    console.log(token);
     return (
       <div>
-        {verifyToken(this.props.dispatch, localStorage.getItem('jwt')) ? (
+        {verifyToken(this.props.dispatch, token) ? (
           <p>Welcome to the app!</p>
         ) : (
           <Authentication />
         )}
         <button onClick={async () => {
 					const payload = {
-						token: localStorage.getItem('jwt')
+						token: token ? JSON.parse(localStorage.getItem('jwt')).encoded : 'null'
           };
-          console.log('********* Begin payload');
-          console.log(payload);
-          console.log('*********** End payload')
-          const res = await axios.post('/api/test', payload);
-          console.log('********** Begin response body');
-          console.log(res.body);
-          console.log('********** End response body');
+          await axios.post('/api/test', payload);
 				}}>Test</button>
       </div>
     );
