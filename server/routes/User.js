@@ -15,7 +15,9 @@ module.exports = app => {
 		console.log(req.body);
 		User.newUser(name, email, password, (result, err) => {
 			if (err) {
-				res.send(err);
+				res.send({
+					error: err
+				});
 			} else {
 				res.send('success');
 			}

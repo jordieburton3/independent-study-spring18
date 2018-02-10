@@ -5,6 +5,7 @@ export default (state = null, action) => {
     switch (action.type) {
         case MARK_EXPIRED:
             console.log('mark expired');
+            localStorage.removeItem('jwt');
             return {
                 ...state,
                 token: false

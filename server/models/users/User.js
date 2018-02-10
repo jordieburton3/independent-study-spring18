@@ -15,11 +15,13 @@ const passwordValidator = new Validator()
   .digits();
 
 const newUser = (name, email, password, done, privilege) => {
+    const errors = {};
     if (!passwordValidator.validate(password)) {
-      done({}, passwordValidationError);
-    } else if (!emailValidator.validate(email)) {
-      done({}, emailValidationError);
-    } else {
+      errors.passwordValidationError = passwordValidationError;
+    } if (!emailValidator.validate(email)) {
+      errors.emailValidationError = emailValidationError;
+    } 
+    if (!errors.emailValidationError && !errors.passwordValidationError) {
       const permission = privilege ? privilege : 'user';
       bcrypt.hash(password, 10, (err, hash) => {
         if (err) done({}, hashingError);
@@ -35,6 +37,8 @@ const newUser = (name, email, password, done, privilege) => {
             );
         }
       });
+    } else {
+      done({}, errors);
     }
   };
   

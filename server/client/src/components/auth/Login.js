@@ -1,16 +1,29 @@
 import React from 'react';
 import axios from 'axios';
-import { newToken } from '../../actions'
+import { newToken } from '../../actions';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
+import { verifyToken } from '../../actions';
 
 class Login extends React.Component {
+	constructor (props) {
+		super(props)
+		this.state = { error: null }
+	  }
+
 	handleUserAuth = async e => {
 		e.preventDefault();
 		const email = e.target.elements.email.value.trim().toLowerCase();
 		const password = e.target.elements.password.value.trim();
 		e.target.elements.email.value = '';
 		e.target.elements.password.value = '';
+		if (!email && !password) {
+			this.setState({
+				error: null
+			});
+			return;
+		}
 		const payload = {
 			email,
 			password
@@ -18,29 +31,46 @@ class Login extends React.Component {
 		const res = await axios.post('/api/login', payload);
 		if (!res.data.errResponse) {
 			const token = JSON.stringify(res.data.token);
-       		localStorage.setItem('jwt', token);
+			localStorage.setItem('jwt', token);
 			this.props.dispatch(newToken());
+		} else if (res.data.errResponse) {
+			this.setState({
+				error: res.data.errResponse
+			});
 		}
 	};
 
 	render() {
 		return (
 			<div>
+				{this.state.error && <p>Invalid username or password. Please try again.</p>}
 				<form onSubmit={this.handleUserAuth}>
-					<input type="text" name="email" placeholder='email'/>
-					<input type="password" name="password" placeholder='password'/>
+					<input type="text" name="email" placeholder="email" />
+					<input type="password" name="password" placeholder="password" />
 					<button>Submit</button>
 				</form>
+				{verifyToken(
+					this.props.dispatch,
+					localStorage.getItem('jwt')
+						? JSON.parse(localStorage.getItem('jwt'))
+						: undefined
+				) && <Redirect to="/" push />}
 			</div>
 		);
 	}
 }
 
-const mapDispatchToProps = (dispatch) => {
-	let actions = bindActionCreators({ 
-		newToken  
+const mapDispatchToProps = dispatch => {
+	let actions = bindActionCreators({
+		newToken
 	});
 	return { ...actions, dispatch };
-} 
+};
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = ({ token }) => {
+	return {
+		token
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
