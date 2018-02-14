@@ -15,13 +15,9 @@ class Header extends React.Component {
           Home
         </Link>
         {verifyToken(this.props.dispatch, token) ? (
-          <div>
             <SignedInHeader />
-          </div>
         ) : (
-          <div>
               <SignedOutHeader />
-          </div>
           
         )}
         {/* <button onClick={async () => {

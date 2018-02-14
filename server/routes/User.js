@@ -1,6 +1,7 @@
 const User = require('../models/users/User');
 const Admin = require('../models/users/Admin');
 const Owner = require('../models/users/Owner');
+require('dotenv').config();
 const { requireLogin } = require('./middleware/requireLogin');
 const {
 	sqlError,
@@ -8,18 +9,46 @@ const {
 	jwtNotProvidedError
 } = require('../helpers/errors');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const crypto = require('crypto');
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.DEV_EMAIL,
+        pass: process.env.DEV_PASSWORD
+    }
+});
+
+const createHash = () => {
+	let current_date = moment.now().toString();
+	let random = Math.random().toString();
+	return crypto.createHash('sha1').update(`${current_date}${random}`).digest('hex');
+}
 
 module.exports = app => {
 	app.post('/api/new_user', (req, res) => {
 		const { name, email, password } = req.body;
 		console.log(req.body);
+		const userHash = createHash();
 		User.newUser(name, email, password, (result, err) => {
 			if (err) {
 				res.send({
 					error: err
 				});
 			} else {
-				res.send('success');
+				const mailOptions = {
+					from: 'jordieburton3dev@gmail.com', // sender address
+					to: 'jordieburton3@gmail.com', // list of receivers
+					subject: 'Subject of your email', // Subject line
+					html: `<p>${userHash}</p>`// plain text body
+				  };
+				transporter.sendMail(mailOptions, (err, info) => {
+					if(err)
+						console.log(err);
+					else
+						console.log(info);
+				});
 			}
 		});
 	});

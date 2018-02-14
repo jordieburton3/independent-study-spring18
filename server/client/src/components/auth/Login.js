@@ -43,6 +43,7 @@ class Login extends React.Component {
 	render() {
 		return (
 			<div>
+				{console.log(this.props)}
 				{this.state.error && <p>Invalid username or password. Please try again.</p>}
 				<form onSubmit={this.handleUserAuth}>
 					<input type="text" name="email" placeholder="email" />

@@ -1,13 +1,25 @@
 import React from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { verifyToken } from '../../actions';
 
-export default class SignUp extends React.Component {
+class SignUp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			passwordValidationError: null,
 			emailValidationError: null
 		}
+	}
+
+	renderRedirectContent() {
+		return verifyToken(
+			this.props.dispatch,
+			localStorage.getItem('jwt')
+				? JSON.parse(localStorage.getItem('jwt'))
+				: undefined
+		) ? <Redirect to="/" push /> : null;
 	}
 
 	handleUserSignup = async e => {
@@ -25,9 +37,13 @@ export default class SignUp extends React.Component {
 		const payload = {
 			email,
 			name,
-			password
+			password,
 		};
 		const res = await axios.post('/api/new_user', payload);
+		if (!res.data.error) {
+			this.props.history.push("/");
+			return;
+		}
 		if (res.data.error.passwordValidationError) {
 			this.setState({
 				passwordValidationError: res.data.error.passwordValidationError
@@ -43,6 +59,7 @@ export default class SignUp extends React.Component {
 	render() {
 		return (
 			<div>
+				{this.renderRedirectContent()}
 				<form onSubmit={this.handleUserSignup}>
 					<input type="text" name="name" placeholder='Full Name'/>
 					{this.state.emailValidationError && <p>Invalid Email</p>}
@@ -55,3 +72,11 @@ export default class SignUp extends React.Component {
 		);
 	}
 }
+
+const mapStateToProps = ({ token }) => {
+	return {
+		token
+	};
+};
+
+export default connect(mapStateToProps)(SignUp);
