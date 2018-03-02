@@ -11,43 +11,48 @@ const {
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const crypto = require('crypto');
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-        user: process.env.DEV_EMAIL,
-        pass: process.env.DEV_PASSWORD
-    }
+	service: 'Gmail',
+	auth: {
+		user: process.env.DEV_EMAIL,
+		pass: process.env.DEV_PASSWORD
+	}
 });
 
 const createHash = () => {
 	let current_date = moment.now().toString();
 	let random = Math.random().toString();
-	return crypto.createHash('sha1').update(`${current_date}${random}`).digest('hex');
-}
+	return crypto
+		.createHash('sha1')
+		.update(`${current_date}${random}`)
+		.digest('hex');
+};
 
 module.exports = app => {
 	app.post('/api/new_user', (req, res) => {
 		const { name, email, password } = req.body;
-		console.log(req.body);
 		const userHash = createHash();
-		User.newUser(name, email, password, (result, err) => {
+		User.newUser(name, email, password, userHash, async (result, err) => {
 			if (err) {
 				res.send({
 					error: err
 				});
 			} else {
+				const protocol = req.protocol;
+				const host = req.get('host');
 				const mailOptions = {
 					from: 'jordieburton3dev@gmail.com', // sender address
-					to: 'jordieburton3@gmail.com', // list of receivers
-					subject: 'Subject of your email', // Subject line
-					html: `<p>${userHash}</p>`// plain text body
-				  };
-				transporter.sendMail(mailOptions, (err, info) => {
-					if(err)
-						console.log(err);
-					else
+					to: [email], // list of receivers
+					subject: 'Please verify your account', // Subject line
+					html: `<div>Welcome to Jordan's Independent Study site! <br>Place make sure to verify your account with <a href="${protocol}://${host}/verify/${userHash}">this link<a></br></div>` // plain text body
+				};
+				await transporter.sendMail(mailOptions, (err, info) => {
+					if (err) res.send(err);
+					else {
 						console.log(info);
+						res.send(info);
+					}
 				});
 			}
 		});
@@ -84,25 +89,51 @@ module.exports = app => {
 				{ complete: true },
 				(error, decoded) => {
 					if (err) {
-                        console.log('err 1');                        
+						console.log('err 1');
 						res.send({ errResponse: jwtAuthError });
 					} else if (error) {
-                        console.log('err 2');
-                        res.send({ errResponse: error });
-                    } else {
-                        console.log('signing in');
+						console.log('err 2');
+						res.send({ errResponse: error });
+					} else {
+						console.log('signing in');
 						const data = {
 							token: {
-                                user: result.user,
+								user: result.user,
 								encoded: result.token,
 								iat: decoded.iat,
 								exp: decoded.exp
-							}
+							},
+							verified: result.verified
 						};
 						res.send(data);
 					}
 				}
 			);
+		});
+	});
+
+	app.post('/api/verify', (req, res) => {
+		const { hash } = req.body;
+		console.log(hash);
+		User.verifyUser(hash, (result, err) => {
+			console.log(result);
+			console.log(err);
+			if (err) {
+				res.send({ success: false });
+			} else {
+				res.send({ success: true });
+			}
+		});
+	});
+
+	app.post('/api/resend_verification', (req, res) => {
+		const { email } = req.body;
+		User.resendVerification(email, (result, err) => {
+			if (err) {
+				res.send(err);
+			} else {
+				res.send(result);
+			}
 		});
 	});
 

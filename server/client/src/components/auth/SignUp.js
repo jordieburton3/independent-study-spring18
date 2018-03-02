@@ -10,7 +10,7 @@ class SignUp extends React.Component {
 		this.state = {
 			passwordValidationError: null,
 			emailValidationError: null
-		}
+		};
 	}
 
 	renderRedirectContent() {
@@ -19,7 +19,9 @@ class SignUp extends React.Component {
 			localStorage.getItem('jwt')
 				? JSON.parse(localStorage.getItem('jwt'))
 				: undefined
-		) ? <Redirect to="/" push /> : null;
+		) ? (
+			<Redirect to="/" push />
+		) : null;
 	}
 
 	handleUserSignup = async e => {
@@ -37,11 +39,11 @@ class SignUp extends React.Component {
 		const payload = {
 			email,
 			name,
-			password,
+			password
 		};
 		const res = await axios.post('/api/new_user', payload);
 		if (!res.data.error) {
-			this.props.history.push("/");
+			this.props.history.push('/');
 			return;
 		}
 		if (res.data.error.passwordValidationError) {
@@ -61,11 +63,13 @@ class SignUp extends React.Component {
 			<div>
 				{this.renderRedirectContent()}
 				<form onSubmit={this.handleUserSignup}>
-					<input type="text" name="name" placeholder='Full Name'/>
+					<input type="text" name="name" placeholder="Full Name" />
 					{this.state.emailValidationError && <p>Invalid Email</p>}
-					<input type="text" name="email" placeholder='email'/>
-					{this.state.passwordValidationError && <p>{this.state.passwordValidationError.message}</p>}
-					<input type="password" name="password" placeholder='password'/>
+					<input type="text" name="email" placeholder="email" />
+					{this.state.passwordValidationError && (
+						<p>{this.state.passwordValidationError.message}</p>
+					)}
+					<input type="password" name="password" placeholder="password" />
 					<button>Register</button>
 				</form>
 			</div>

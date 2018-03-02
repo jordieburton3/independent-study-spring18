@@ -7,10 +7,10 @@ import { Redirect } from 'react-router-dom';
 import { verifyToken } from '../../actions';
 
 class Login extends React.Component {
-	constructor (props) {
-		super(props)
-		this.state = { error: null }
-	  }
+	constructor(props) {
+		super(props);
+		this.state = { error: null };
+	}
 
 	handleUserAuth = async e => {
 		e.preventDefault();
@@ -32,6 +32,10 @@ class Login extends React.Component {
 		if (!res.data.errResponse) {
 			const token = JSON.stringify(res.data.token);
 			localStorage.setItem('jwt', token);
+			console.log(res.data);
+			if (res.data.verified) {
+				localStorage.setItem('verifiedToken', res.data.verified);
+			}
 			this.props.dispatch(newToken());
 		} else if (res.data.errResponse) {
 			this.setState({
@@ -44,7 +48,9 @@ class Login extends React.Component {
 		return (
 			<div>
 				{console.log(this.props)}
-				{this.state.error && <p>Invalid username or password. Please try again.</p>}
+				{this.state.error && (
+					<p>Invalid username or password. Please try again.</p>
+				)}
 				<form onSubmit={this.handleUserAuth}>
 					<input type="text" name="email" placeholder="email" />
 					<input type="password" name="password" placeholder="password" />

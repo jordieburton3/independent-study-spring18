@@ -1,20 +1,19 @@
-import { MARK_EXPIRED, MARK_VALID } from '../actions/types';
+import { MARK_VERIFIED, MARK_UNVERIFIED } from '../actions/types';
 
 export default (state = null, action) => {
 	console.log(action.type);
 	switch (action.type) {
-		case MARK_EXPIRED:
-			console.log('mark expired');
+		case MARK_VERIFIED:
 			localStorage.removeItem('jwt');
 			return {
 				...state,
-				token: false
+				verified: true
 			};
-		case MARK_VALID:
-			console.log('set true');
+		case MARK_UNVERIFIED:
+			console.log('set false');
 			return {
 				...state,
-				token: true
+				verified: false
 			};
 		default:
 			//console.log('default');
