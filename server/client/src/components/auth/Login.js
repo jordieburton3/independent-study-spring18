@@ -9,7 +9,7 @@ import { verifyToken } from '../../actions';
 class Login extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { error: null };
+		this.state = { error: null, success: false };
 	}
 
 	handleUserAuth = async e => {
@@ -32,11 +32,12 @@ class Login extends React.Component {
 		if (!res.data.errResponse) {
 			const token = JSON.stringify(res.data.token);
 			localStorage.setItem('jwt', token);
-			console.log(res.data);
+			//console.log(res.data);
 			if (res.data.verified) {
 				localStorage.setItem('verifiedToken', res.data.verified);
 			}
 			this.props.dispatch(newToken());
+			this.setState({ verified: true });
 		} else if (res.data.errResponse) {
 			this.setState({
 				error: res.data.errResponse
@@ -47,7 +48,6 @@ class Login extends React.Component {
 	render() {
 		return (
 			<div>
-				{console.log(this.props)}
 				{this.state.error && (
 					<p>Invalid username or password. Please try again.</p>
 				)}
@@ -56,12 +56,7 @@ class Login extends React.Component {
 					<input type="password" name="password" placeholder="password" />
 					<button>Submit</button>
 				</form>
-				{verifyToken(
-					this.props.dispatch,
-					localStorage.getItem('jwt')
-						? JSON.parse(localStorage.getItem('jwt'))
-						: undefined
-				) && <Redirect to="/" push />}
+				{this.state.verified && <Redirect to="/" push />}
 			</div>
 		);
 	}
