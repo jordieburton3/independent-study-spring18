@@ -8,7 +8,7 @@ const verifyToken = (dispatch, token = { exp: 0 }) => {
 	if (token.exp < moment.now() / 1000) {
 		localStorage.removeItem('jwt');
 		localStorage.removeItem('verifiedToken');
-		//dispatch(expireToken());
+		dispatch(expireToken());
 		return false;
 	}
 	return true;

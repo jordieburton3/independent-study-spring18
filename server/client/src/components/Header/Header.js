@@ -1,18 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { verifyToken } from '../../actions';
 import { Link } from 'react-router-dom';
 import SignedInHeader from './SignedInHeader';
 import SignedOutHeader from './SignedOutHeader';
+import { checkCredentials } from '../../utils';
 
 class Header extends React.Component {
+	componentWillMount() {
+		checkCredentials(this.props.dispatch);
+	}
+
 	render() {
-		const rawToken = localStorage.getItem('jwt');
-		const token = rawToken ? JSON.parse(rawToken) : undefined;
+		const token = this.props.token ?  this.props.token.token : false;
+		//console.log(this.props.token ? console.log(`the value is ${this.props.token.token}`) : console.log('doesnt exist'));
 		return (
 			<div>
 				<Link to="/">Home</Link>
-				{verifyToken(this.props.dispatch, token) ? (
+				{token ? (
 					<SignedInHeader />
 				) : (
 					<SignedOutHeader />
@@ -28,9 +32,10 @@ class Header extends React.Component {
 	}
 }
 
-const mapStateToProps = ({ token }) => {
+const mapStateToProps = ({ token, verified }) => {
 	return {
-		token
+		token,
+		verified
 	};
 };
 

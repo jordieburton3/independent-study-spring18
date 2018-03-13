@@ -9,7 +9,8 @@ class SignUp extends React.Component {
 		super(props);
 		this.state = {
 			passwordValidationError: null,
-			emailValidationError: null
+			emailValidationError: null,
+			content: null
 		};
 	}
 
@@ -22,6 +23,10 @@ class SignUp extends React.Component {
 		) ? (
 			<Redirect to="/" push />
 		) : null;
+	}
+
+	componentWillMount() {
+		this.setState({ content: this.renderRedirectContent() });
 	}
 
 	handleUserSignup = async e => {
@@ -61,7 +66,7 @@ class SignUp extends React.Component {
 	render() {
 		return (
 			<div>
-				{this.renderRedirectContent()}
+				{this.state.content}
 				<form onSubmit={this.handleUserSignup}>
 					<input type="text" name="name" placeholder="Full Name" />
 					{this.state.emailValidationError && <p>Invalid Email</p>}
@@ -77,9 +82,10 @@ class SignUp extends React.Component {
 	}
 }
 
-const mapStateToProps = ({ token }) => {
+const mapStateToProps = ({ token, verified }) => {
 	return {
-		token
+		token,
+		verified
 	};
 };
 

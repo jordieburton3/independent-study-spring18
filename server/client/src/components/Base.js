@@ -5,21 +5,8 @@ import { Login, SignUp, Verify } from './auth';
 import PrivateRoute from './routers';
 import Courses from './courses';
 import Header from './Header/Header';
-import { checkCredentials } from '../utils';
 
-class App extends React.Component {
-	componentWillMount() {
-		checkCredentials(this.props.dispatch);
-	}
-
-	componentWillReceiveProps(nextProps) {
-		const token = this.props.token ?  this.props.token.token : false;
-		const nextToken = nextProps.token ?  nextProps.token.token : false;		
-		if (!token && nextToken) {
-			checkCredentials(this.props.dispatch);
-		}
-	}
-
+class Base extends React.Component {
 	render() {
 		return (
 			<BrowserRouter>
@@ -33,8 +20,6 @@ class App extends React.Component {
 						path="/my_courses"
 						dispatch={this.props.dispatch}
 						component={Courses}
-						signedIn={this.props.token}
-						verified={this.props.verified}
 					/>
 				</div>
 			</BrowserRouter>
@@ -49,4 +34,4 @@ const mapStateToProps = ({ token, verified }) => {
 	};
 };
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps)(Base);
