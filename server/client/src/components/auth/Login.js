@@ -4,12 +4,16 @@ import { newToken } from '../../actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
-import { verifyToken } from '../../actions';
+import { checkCredentials } from '../../utils';
 
 class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { error: null, success: false };
+	}
+
+	componentWillMount() {
+		checkCredentials(this.props.dispatch);
 	}
 
 	handleUserAuth = async e => {
@@ -46,6 +50,7 @@ class Login extends React.Component {
 	};
 
 	render() {
+		const token = this.props.token ? this.props.token.token : false;
 		return (
 			<div>
 				{this.state.error && (
@@ -56,7 +61,7 @@ class Login extends React.Component {
 					<input type="password" name="password" placeholder="password" />
 					<button>Submit</button>
 				</form>
-				{this.state.verified && <Redirect to="/" push />}
+				{token && <Redirect to="/" push />}
 			</div>
 		);
 	}

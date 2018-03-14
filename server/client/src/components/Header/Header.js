@@ -1,46 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { verifyToken } from '../../actions';
 import { Link } from 'react-router-dom';
 import SignedInHeader from './SignedInHeader';
 import SignedOutHeader from './SignedOutHeader';
+import { checkCredentials } from '../../utils';
 
 class Header extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = { verified: false };
-	}
-
-	checkVerified() {
-		const rawToken = localStorage.getItem('jwt');
-		const token = rawToken ? JSON.parse(rawToken) : undefined;
-		this.setState({
-			verified: verifyToken(this.props.dispatch, token)
-		});
-	}
-
 	componentWillMount() {
-		this.checkVerified();
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.token.token) {
-			const rawToken = localStorage.getItem('jwt');
-			const token = rawToken ? JSON.parse(rawToken) : undefined;
-			this.setState({
-				verified:
-					verifyToken(this.props.dispatch, token) && nextProps.token.token
-			});
-			window.location.reload();
-		}
+		checkCredentials(this.props.dispatch);
 	}
 
 	render() {
-		//const t = this.props.token;
+		const token = this.props.token ? this.props.token.token : false;
+		//console.log(this.props.token ? console.log(`the value is ${this.props.token.token}`) : console.log('doesnt exist'));
 		return (
 			<div>
 				<Link to="/">Home</Link>
-				{this.state.verified ? <SignedInHeader /> : <SignedOutHeader />}
+				{token ? <SignedInHeader /> : <SignedOutHeader />}
 				{/* <button onClick={async () => {
 					const payload = {
 						token: rawToken ? JSON.parse(localStorage.getItem('jwt')).encoded : 'null'
@@ -52,9 +28,10 @@ class Header extends React.Component {
 	}
 }
 
-const mapStateToProps = ({ token }) => {
+const mapStateToProps = ({ token, verified }) => {
 	return {
-		token
+		token,
+		verified
 	};
 };
 

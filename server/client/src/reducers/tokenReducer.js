@@ -11,7 +11,7 @@ export default (state = null, action) => {
 				token: false
 			};
 		case MARK_VALID:
-			console.log('set true');
+			//console.log('set true');
 			return {
 				...state,
 				token: true
