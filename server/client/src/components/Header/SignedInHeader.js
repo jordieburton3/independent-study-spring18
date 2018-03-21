@@ -8,8 +8,7 @@ class SignedInHeader extends React.Component {
 		return (
 			<div>
 				<Link to="/my_courses">My Courses</Link>
-				<p>Work Courses</p>
-				<p>About</p>
+				<Link to="/create_course">Create Course</Link>
 				<button onClick={() => this.props.dispatch(expireToken())}>
 					sign out
 				</button>

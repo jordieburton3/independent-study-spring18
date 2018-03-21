@@ -3,7 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Login, SignUp, Verify } from './auth';
 import PrivateRoute from './routers';
-import Courses from './courses';
+import { Courses, CreateCourse } from './courses';
 import Header from './Header/Header';
 import { checkCredentials } from '../utils';
 
@@ -33,6 +33,14 @@ class App extends React.Component {
 						path="/my_courses"
 						dispatch={this.props.dispatch}
 						component={Courses}
+						signedIn={this.props.token}
+						verified={this.props.verified}
+					/>
+					<PrivateRoute
+						exact
+						path="/create_course"
+						dispatch={this.props.dispatch}
+						component={CreateCourse}
 						signedIn={this.props.token}
 						verified={this.props.verified}
 					/>
