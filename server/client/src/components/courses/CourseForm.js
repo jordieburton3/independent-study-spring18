@@ -32,12 +32,10 @@ export default class CourseForm extends React.Component {
         }
 	};
 
-	onSubmit = e => {
+	onSubmit = async e => {
 		e.preventDefault();
-		sessionStorage.clear()
 		const title = this.state.title;
 		const desc = this.state.description;
-		console.log(e.target.value);
 		// if (!this.state.description || !this.state.amount) {
 		//     // set error message
 		//     this.setState(() => ({ error: 'You need to have a description AND an amount!'}));

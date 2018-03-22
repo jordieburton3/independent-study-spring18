@@ -10,13 +10,17 @@ module.exports = app => {
     app.post('/api/new_course', (req, res) => {
         const { title, description, creator } = req.body;
         newCourse(title, description, creator, (result, id, error) => {
-            const toSend = {
-                title,
-                description,
-                creator,
-                id
+            if (error) {
+                res.send(error);
+            } else {
+                const toSend = {
+                    title,
+                    description,
+                    creator,
+                    id
+                };
+                res.send(toSend);
             }
-            res.send(toSend);
         });
     });
 

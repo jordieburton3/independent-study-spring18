@@ -19,11 +19,10 @@ const newCourse = (title, description, creator, done) => {
         [id, title, description, creator, adminsJson, usersJson],
         (err, result) => {
             if (err) {
-                console.log(err);
+                done(null, null, err);
             } else {
-                console.log(result);
+                done(result, id, null);
             }
-            done(result, id, err);
         });
 }
 
