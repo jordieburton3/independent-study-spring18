@@ -36,7 +36,33 @@ const getCourseDetails = (id, done) => {
     });
 }
 
+const getAllUserCourses = (user, done) => {
+    database.get().query(`SELECT * FROM Course`, [], (err, rows) => {
+        if (rows.length == 0) {
+            done({}, noCourseError);
+        } else {
+            const courses = rows.filter((course) => {
+                const owner = course.owner;
+                const admins = JSON.parse(course.admins);
+                const users = JSON.parse(course.users);
+                if (user == owner) {
+                    return true;
+                } 
+                if (admins.includes(user)) {
+                    return true;
+                }
+                if (users.includes(user)) {
+                    return true;
+                }
+                return false;
+            });
+            done(courses);
+        }
+    });
+}
+
 module.exports = {
     newCourse,
-    getCourseDetails
+    getCourseDetails,
+    getAllUserCourses
 }

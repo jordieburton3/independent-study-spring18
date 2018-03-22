@@ -18,10 +18,10 @@ const requireLogin = (req, res, next) => {
 			token,
 			process.env.JWT_SECRET,
 			{ complete: true },
-			(err, decoded) => {
-				console.log(err);
-				if (err) {
-					res.send(jwtAuthError);
+			(error, decoded) => {
+				console.log(error);
+				if (error) {
+					res.send({ err: jwtAuthError });
 				} else {
 					// if everything is good, save to request for use in other routes
 					req.decoded = decoded;

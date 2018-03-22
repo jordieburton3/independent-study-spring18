@@ -1,53 +1,56 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import axios from 'axios';
 
-export default class CourseForm extends React.Component {
+class CourseForm extends React.Component {
 	constructor(props) {
-        super(props);
-        const defaultDescription = sessionStorage.getItem('new_course_description') ? sessionStorage.getItem('new_course_description') : '';
-        const defaultTitle = sessionStorage.getItem('new_course_title') ? sessionStorage.getItem('new_course_title') : '';
+		super(props);
+		const defaultDescription = sessionStorage.getItem('new_course_description')
+			? sessionStorage.getItem('new_course_description')
+			: '';
+		const defaultTitle = sessionStorage.getItem('new_course_title')
+			? sessionStorage.getItem('new_course_title')
+			: '';
 		this.state = {
-			description: props.description
-				? props.description
-				: defaultDescription,
-			title: props.title
-				? props.title
-                : defaultTitle,
-            errors: []
+			description: props.description ? props.description : defaultDescription,
+			title: props.title ? props.title : defaultTitle,
+			errors: []
 		};
 	}
 
 	onDescriptionChange = e => {
-        const description = e.target.value;
-        if (description.length < 150) {
-            sessionStorage.setItem('new_course_description', description);
-		    this.setState(() => ({ description }));
-        }  
+		const description = e.target.value;
+		if (description.length < 150) {
+			sessionStorage.setItem('new_course_description', description);
+			this.setState(() => ({ description }));
+		}
 	};
 
 	onTitleChange = e => {
-        const title = e.target.value;
-        if (title.length < 60) {
-            sessionStorage.setItem('new_course_title', title);
-		    this.setState(() => ({ title }));
-        }
+		const title = e.target.value;
+		if (title.length < 60) {
+			sessionStorage.setItem('new_course_title', title);
+			this.setState(() => ({ title }));
+		}
 	};
 
 	onSubmit = async e => {
 		e.preventDefault();
 		const title = this.state.title;
-		const desc = this.state.description;
-		// if (!this.state.description || !this.state.amount) {
-		//     // set error message
-		//     this.setState(() => ({ error: 'You need to have a description AND an amount!'}));
-		// } else {
-		//     this.setState(() => ({ error: ''}));
-		//     this.props.onSubmit({
-		//         description: this.state.description,
-		//         amount: parseFloat(this.state.amount, 10) * 100,
-		//         createdAt: this.state.createdAt.valueOf(),
-		//         note: this.state.note
-		//     });
-		// }
+		const description = this.state.description;
+		const creator = JSON.parse(localStorage.getItem('jwt')).user.email;
+		const token = JSON.parse(localStorage.getItem('jwt')).encoded;
+		const payload = {
+			title,
+			description,
+			creator,
+			token
+		};
+		const result = await axios.post('/api/new_course', payload);
+		if (!result.data.err) {
+			sessionStorage.clear();
+			this.props.history.push('/my_courses');
+		}
 	};
 
 	render() {
@@ -74,3 +77,5 @@ export default class CourseForm extends React.Component {
 		);
 	}
 }
+
+export default withRouter(CourseForm);
