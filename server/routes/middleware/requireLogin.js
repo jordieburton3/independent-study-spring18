@@ -7,7 +7,7 @@ const {
 
 const requireLogin = (req, res, next) => {
 	// check header or url parameters or post parameters for token
-	console.log(req.body);
+	//console.log(req.body);
 	const token =
 		req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -19,16 +19,11 @@ const requireLogin = (req, res, next) => {
 			process.env.JWT_SECRET,
 			{ complete: true },
 			(error, decoded) => {
-				console.log(error);
 				if (error) {
 					res.send({ err: jwtAuthError });
 				} else {
 					// if everything is good, save to request for use in other routes
 					req.decoded = decoded;
-					console.log('*********Begin decoded');
-					console.log(decoded);
-					console.log(req);
-					console.log('*********** End decoded');
 					next();
 				}
 			}
