@@ -22,7 +22,8 @@ const Schemas = [
         email varchar(255) NOT NULL,
         name varchar(255) NOT NULL,
         hash varchar(255) NOT NULL,
-        verified BOOL NOT NULL,
+		verified BOOL NOT NULL,
+		courses JSON NOT NULL,
         PRIMARY KEY (email)
       )`,
 	`CREATE TABLE Verify (
@@ -36,7 +37,17 @@ const Schemas = [
         timestamp varchar(255) NOT NULL,
         text varchar(255) NOT NULL,
         PRIMARY KEY (id)
-    )`
+	)`, 
+	`CREATE TABLE Course (
+		id varchar(255) NOT NULL,
+		title varchar(255) NOT NULL,
+		description varchar(255) NOT NULL,
+		owner varchar(255) NOT NULL,
+		admins JSON NOT NULL,
+		users JSON NOT NULL,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		PRIMARY KEY (id)
+	)`
 ];
 
 const Views = [];

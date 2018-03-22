@@ -27,6 +27,7 @@ const mode =
 
 
 require('./routes/User')(app);
+require('./routes/Course')(app);
 
 database.connect(mode, function(err) {
     if (err) {

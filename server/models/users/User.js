@@ -41,8 +41,8 @@ const newUser = (name, email, password, vhash, done, privilege) => {
 				database
 					.get()
 					.query(
-						`INSERT INTO User (name, email, hash, verified) values (?, ?, ?, ?)`,
-						[name, email, hash, false],
+						`INSERT INTO User (name, email, hash, verified, courses) values (?, ?, ?, ?, ?)`,
+						[name, email, hash, false, JSON.stringify([])],
 						(err, result) => {
 							done({}, err);
 						}
