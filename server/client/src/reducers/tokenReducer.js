@@ -6,6 +6,10 @@ export default (state = null, action) => {
 		case MARK_EXPIRED:
 			//console.log('mark expired');
 			localStorage.removeItem('jwt');
+			localStorage.removeItem('course');
+			localStorage.removeItem('verifiedToken');
+			sessionStorage.removeItem('new_course_description');
+			sessionStorage.removeItem('new_course_title');
 			return {
 				...state,
 				token: false

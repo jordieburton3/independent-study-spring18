@@ -1,15 +1,19 @@
 import React from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { currentCourse } from '../../actions';
 
-export default class Courses extends React.Component {
+class Courses extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			courses: []
+			courses: [],
+			value: ''
 		};
+		this.handleChange = this.handleChange.bind(this);
 	}
 
-	async componentWillMount() {
+	async fetchCourses() {
 		const user = JSON.parse(localStorage.getItem('jwt')).user.email;
 		const token = JSON.parse(localStorage.getItem('jwt')).encoded;
 		const payload = { user, token };
@@ -20,13 +24,50 @@ export default class Courses extends React.Component {
 		}
 	}
 
+	async componentWillMount() {
+		await this.fetchCourses();
+		const currCourse = localStorage.getItem('course') ? localStorage.getItem('course') : false;
+		if (currCourse) {
+			this.props.dispatch(currentCourse(currCourse));
+		}
+	}
+
+	handleChange(e) {
+		const value = e.target.value;
+		if (value !== '') {
+			localStorage.setItem('course', value);
+			this.setState({ value: value });
+			this.props.dispatch(currentCourse(value));
+		}
+	}
+
 	render() {
+		const currCourse = this.props.currentCourse ? this.props.currentCourse.currentCourse : '';
 		return (
 			<div>
-				{this.state.courses.map((course, index) => (
-					<p key={index}>{course.title}</p>
-				))}
+				<form>
+					<select value={currCourse} onChange={this.handleChange}>
+						<option disabled value>
+							Select Course
+						</option>
+						<option disabled>Current Course: {currCourse}</option>
+						<option defaultValue disabled></option>
+						{this.state.courses.map((course, index) => (
+							<option key={index} value={course.title}>
+								{course.title}
+							</option>
+						))}
+					</select>
+				</form>
 			</div>
 		);
 	}
 }
+
+const mapStateToProps = ({ currentCourse }) => {
+	return {
+		currentCourse
+	};
+};
+
+export default connect(mapStateToProps)(Courses);

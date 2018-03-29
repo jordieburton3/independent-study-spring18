@@ -1,6 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
+//import { newCourse } from '../../actions';
+//import currentCourse from '../../actions/currentCourse';
 
 class CourseForm extends React.Component {
 	constructor(props) {
@@ -38,8 +41,9 @@ class CourseForm extends React.Component {
 		e.preventDefault();
 		const title = this.state.title;
 		const description = this.state.description;
-		const creator = JSON.parse(localStorage.getItem('jwt')).user.email;
-		const token = JSON.parse(localStorage.getItem('jwt')).encoded;
+		const jwt = localStorage.getItem('jwt');
+		const creator = JSON.parse(jwt).user.email;
+		const token = JSON.parse(jwt).encoded;
 		const payload = {
 			title,
 			description,
@@ -49,7 +53,8 @@ class CourseForm extends React.Component {
 		const result = await axios.post('/api/new_course', payload);
 		if (!result.data.err) {
 			sessionStorage.clear();
-			this.props.history.push('/my_courses');
+			this.props.history.push('/');
+			window.location.reload();
 		}
 	};
 
@@ -78,4 +83,10 @@ class CourseForm extends React.Component {
 	}
 }
 
-export default withRouter(CourseForm);
+const mapStateToProps = ({ currentCourse }) => {
+	return {
+		currentCourse
+	};
+};
+
+export default withRouter(connect(mapStateToProps)(CourseForm));

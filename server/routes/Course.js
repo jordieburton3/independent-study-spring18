@@ -3,7 +3,8 @@ const { requireLogin } = require('./middleware/requireLogin');
 const {
     newCourse,
     getCourseDetails,
-    getAllUserCourses
+    getAllUserCourses,
+    addCourseToUser
 } = require('../models/courses/Course');
 
 
@@ -14,13 +15,15 @@ module.exports = app => {
             if (err) {
                 res.send({ err });
             } else {
-                const toSend = {
-                    title,
-                    description,
-                    creator,
-                    id
-                };
-                res.send(toSend);
+                addCourseToUser(creator, { id, title }, () => {
+                    const toSend = {
+                        title,
+                        description,
+                        creator,
+                        id
+                    };
+                    res.send(toSend);
+                })
             }
         });
     });

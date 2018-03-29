@@ -37,32 +37,37 @@ const getCourseDetails = (id, done) => {
 }
 
 const getAllUserCourses = (user, done) => {
-    database.get().query(`SELECT * FROM Course`, [], (err, rows) => {
+    database.get().query(`SELECT * FROM User WHERE email=?`, [user], (err, rows) => {
         if (rows.length == 0) {
             done({}, noCourseError);
         } else {
-            const courses = rows.filter((course) => {
-                const owner = course.owner;
-                const admins = JSON.parse(course.admins);
-                const users = JSON.parse(course.users);
-                if (user == owner) {
-                    return true;
-                } 
-                if (admins.includes(user)) {
-                    return true;
-                }
-                if (users.includes(user)) {
-                    return true;
-                }
-                return false;
-            });
+            const courses = JSON.parse(rows[0].courses);
             done(courses);
         }
     });
 }
 
+const addCourseToUser = (user, courseInfo, done) => {
+    database.get().query(`SELECT * FROM User WHERE email=?`, [user], (err, rows) => {
+        if (err) {
+            console.log(err);
+        }
+        const record = rows[0];
+        const courseArray = JSON.parse(record.courses);
+        courseArray.push(courseInfo);
+        const jsonArray = JSON.stringify(courseArray);
+        database.get().query(`UPDATE User SET courses=? WHERE email=?`, [jsonArray, user], (error, r) => {
+            if (error) {
+                console.log(error);
+            } 
+            done({});
+        });
+    })
+}
+
 module.exports = {
     newCourse,
     getCourseDetails,
-    getAllUserCourses
+    getAllUserCourses,
+    addCourseToUser
 }
