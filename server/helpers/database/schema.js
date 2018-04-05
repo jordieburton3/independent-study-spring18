@@ -37,7 +37,7 @@ const Schemas = [
         timestamp varchar(255) NOT NULL,
         text varchar(255) NOT NULL,
         PRIMARY KEY (id)
-	)`, 
+	)`,
 	`CREATE TABLE Course (
 		id varchar(255) NOT NULL,
 		title varchar(255) NOT NULL,

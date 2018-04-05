@@ -85,7 +85,7 @@ const validateUser = (email, password, done) => {
 							done({
 								user: {
 									email: rows[0].email,
-									name: rows[0].name, 
+									name: rows[0].name
 								},
 								token,
 								verified: true
@@ -94,7 +94,7 @@ const validateUser = (email, password, done) => {
 							done({
 								user: {
 									email: rows[0].email,
-									name: rows[0].name, 
+									name: rows[0].name
 								},
 								token,
 								verified: false
@@ -147,20 +147,23 @@ const verifyUser = (hash, done) => {
 };
 
 const resendVerification = (email, done) => {
-  database.get().query(`SELECT * FROM Verify WHERE email=?`, [email], (err, rows) => {
-    if (err) {
-      done(false, { error: err });
-    } else {
-      const { vhash } = rows[0]
-      console.log(vhash);
-      done(vhash);
-    }
-  })
+	database
+		.get()
+		.query(`SELECT * FROM Verify WHERE email=?`, [email], (err, rows) => {
+			if (err) {
+				done(false, { error: err });
+			} else {
+				const { vhash } = rows[0];
+				console.log(vhash);
+				done(vhash);
+			}
+		});
 };
 
 module.exports = {
 	newUser: newUser,
 	validateUser: validateUser,
-  verifyUser: verifyUser,
-  resendVerification, resendVerification
+	verifyUser: verifyUser,
+	resendVerification,
+	resendVerification
 };
