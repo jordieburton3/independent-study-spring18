@@ -8,7 +8,8 @@ const {
     addUserToCourse,
     addAdminToCourse,
     newUsers,
-    newAdmins
+    newAdmins,
+    setUserCourses
 } = require('../models/courses/Course');
 const { cantAddOwnerError } = require('../models/courses/errors');
 
@@ -107,12 +108,13 @@ module.exports = app => {
                 if (users.indexOf(owner) != -1) {
                     result.errors.push({ user: owner, error: cantAddOwnerError });
                 }
+                setUserCourses(result.validUsers, courseInfo);
                 res.send(result);
             }
         });
     });
 
-    app.post('/api/add_as_admin', requireAdminPrivilege, (req, res) => {
+    app.post('/api/add_as_admin', requireLogin, requireOwnerPrivilege, (req, res) => {
         const { owner, users, courseInfo } = req.body;
         const usersToSend = users.filter((elem, pos) => {
             return elem != owner;
@@ -124,6 +126,7 @@ module.exports = app => {
                 if (users.indexOf(owner) != -1) {
                     result.errors.push({ user: owner, error: cantAddOwnerError });
                 }
+                setUserCourses(result.validUsers, courseInfo);
                 res.send(result);
             }
         });

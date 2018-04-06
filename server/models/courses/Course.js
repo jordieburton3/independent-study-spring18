@@ -322,6 +322,42 @@ const newAdmins = (users, courseInfo, done) => {
 	});
 };
 
+const setUserCourse = async (user, courseInfo) => {
+	return new Promise((resolve, reject) => {
+		database
+			.get()
+			.query(`SELECT * FROM User WHERE email=?`, [user], (err, rows) => {
+				if (err) {
+					reject(err);
+				} else {
+					const record = rows[0];
+					const courses = JSON.parse(record.courses);
+					courses.push(courseInfo);
+					const jsonArray = JSON.stringify(courses);
+					database
+						.get()
+						.query(
+							`UPDATE User SET courses=? WHERE email=?`,
+							[jsonArray, user],
+							(error, r) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(r);
+								}
+							}
+						);
+				}
+			});
+	});
+};
+
+const setUserCourses = async (users, courseInfo) => {
+	for (let i = 0; i < users.length; i++) {
+		await setUserCourse(users[i], courseInfo);
+	}
+};
+
 module.exports = {
 	newCourse,
 	getCourseDetails,
@@ -329,6 +365,7 @@ module.exports = {
 	addCourseToUser,
 	addUserToCourse,
 	addAdminToCourse,
-    newUsers,
-    newAdmins
+	newUsers,
+	newAdmins,
+	setUserCourses
 };
