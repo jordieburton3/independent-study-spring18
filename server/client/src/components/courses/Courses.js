@@ -18,7 +18,6 @@ class Courses extends React.Component {
 		const token = JSON.parse(localStorage.getItem('jwt')).encoded;
 		const payload = { user, token };
 		const result = await axios.post('/api/fetch_all_courses', payload);
-		console.log(result);
 		if (!result.data.err) {
 			this.setState({ courses: result.data });
 		}
@@ -26,34 +25,38 @@ class Courses extends React.Component {
 
 	async componentWillMount() {
 		await this.fetchCourses();
-		const currCourse = localStorage.getItem('course') ? localStorage.getItem('course') : false;
+		const currCourse = localStorage.getItem('course')
+			? localStorage.getItem('course')
+			: false;
 		if (currCourse) {
 			this.props.dispatch(currentCourse(currCourse));
 		}
 	}
 
 	handleChange(e) {
-		const value = e.target.value;
-		if (value !== '') {
-			localStorage.setItem('course', value);
-			this.setState({ value: value });
-			this.props.dispatch(currentCourse(value));
+		const jsonValue = e.target.value;
+		if (jsonValue !== '') {
+			const value = JSON.parse(jsonValue);
+			localStorage.setItem('course', JSON.stringify(value));
+			this.setState({ value: value.title });
+			this.props.dispatch(currentCourse(jsonValue));
 		}
 	}
 
 	render() {
-		const currCourse = this.props.currentCourse ? this.props.currentCourse.currentCourse : '';
+		const currCourse = this.props.currentCourse
+			? JSON.parse(this.props.currentCourse.currentCourse)
+			: { title: '' };
 		return (
 			<div>
 				<form>
-					<select value={currCourse} onChange={this.handleChange}>
-						<option disabled value>
+					<select value={currCourse.title} onChange={this.handleChange}>
+						<option disabled defaultValue value="">
 							Select Course
 						</option>
-						<option disabled>Current Course: {currCourse}</option>
-						<option defaultValue disabled></option>
+						<option disabled>Current Course: {currCourse.title}</option>
 						{this.state.courses.map((course, index) => (
-							<option key={index} value={course.title}>
+							<option key={index} value={JSON.stringify(course)}>
 								{course.title}
 							</option>
 						))}

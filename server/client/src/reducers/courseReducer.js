@@ -5,7 +5,7 @@ export default (state = null, action) => {
 	switch (action.type) {
 		case MARK_NEW:
 			return {
-                ...state
+				...state
 			};
 		case MARK_CURRENT:
 			return {

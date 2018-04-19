@@ -11,6 +11,7 @@ class SignedInHeader extends React.Component {
 			<div>
 				<Courses />
 				<Link to="/create_course">Create Course</Link>
+				<Link to="/add_users">Add Users</Link>
 				{/* {current_course ? <p>{ current_course }</p> : null} */}
 				<button onClick={() => this.props.dispatch(expireToken())}>
 					sign out

@@ -36,3 +36,6 @@ const mapStateToProps = ({ token, verified }) => {
 };
 
 export default connect(mapStateToProps)(Header);
+
+// descripbe checks + resources that would be protects
+// block diagran to show navigation
