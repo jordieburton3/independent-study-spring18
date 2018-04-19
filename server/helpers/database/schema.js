@@ -45,6 +45,7 @@ const Schemas = [
 		owner varchar(255) NOT NULL,
 		admins JSON NOT NULL,
 		users JSON NOT NULL,
+		posts JSON NOT NULL,
 		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		PRIMARY KEY (id)
 	)`

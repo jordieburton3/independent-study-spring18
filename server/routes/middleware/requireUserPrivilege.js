@@ -1,12 +1,13 @@
 const { database } = require('../../helpers/database/db');
 const { noPrivilegeError } = require('../../models/courses/errors');
 
-const requireAdminPrivilege = (req, res, next) => {
+const requireUserPrivilege = (req, res, next) => {
     const { sender, courseInfo } = req.body;
     database.get().query(`SELECT * FROM Course WHERE id=?`, [courseInfo.id], (err, rows) => {
         const record = rows[0];
         const admins = JSON.parse(record.admins);
-        if (record.owner == sender || admins.includes(sender)) {
+        const users = JSON.parse(record.users);
+        if (record.owner == sender || admins.includes(sender) || users.include(sender)) {
             next();
         } else {
             res.send({ errors: [noPrivilegeError] });
@@ -15,5 +16,5 @@ const requireAdminPrivilege = (req, res, next) => {
 }
 
 module.exports = {
-	requireAdminPrivilege
+	requireUserPrivilege
 };

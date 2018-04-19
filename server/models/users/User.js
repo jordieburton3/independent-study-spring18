@@ -79,7 +79,7 @@ const validateUser = (email, password, done) => {
 							passwordHash: rows[0].hash
 						};
 						const token = jwt.sign(data, process.env.JWT_SECRET, {
-							expiresIn: 15
+							expiresIn: 60*60*24
 						});
 						if (rows[0].verified) {
 							done({

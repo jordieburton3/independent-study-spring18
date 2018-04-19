@@ -25,16 +25,19 @@ const removeDups = (filteredList, sourceList) =>
 const newCourse = (title, description, creator, done) => {
 	const admins = [];
 	const users = [];
+	const posts = [];
 	const adminsJson = JSON.stringify(admins);
 	const usersJson = JSON.stringify(users);
+	const postsJson = JSON.stringify(posts);
 	const id = uuid();
 	database
 		.get()
 		.query(
-			`INSERT INTO Course (id, title, description, owner, admins, users) VALUES (?, ?, ?, ?, ?, ?)`,
-			[id, title, description, creator, adminsJson, usersJson],
+			`INSERT INTO Course (id, title, description, owner, admins, users, posts) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			[id, title, description, creator, adminsJson, usersJson, postsJson],
 			(err, result) => {
 				if (err) {
+					console.log(err)
 					done(null, null, err);
 				} else {
 					done(result, id, null);
@@ -213,7 +216,8 @@ const newUsers = (users, courseInfo, done) => {
 								const isValid = validUsers.indexOf(elem) != -1;
 								const isUnique =
 									parsedUsers.indexOf(elem) == -1 &&
-									adminArray.indexOf(elem) == -1;
+									adminArray.indexOf(elem) == -1 &&
+									elem != record.owner;
 								if (!isValid) {
 									errors.push({ user: elem, error: doesNotExistError });
 								} else if (!isUnique) {
@@ -283,7 +287,8 @@ const newAdmins = (users, courseInfo, done) => {
 								const isValid = validUsers.indexOf(elem) != -1;
 								const isUnique =
 									parsedAdmins.indexOf(elem) == -1 &&
-									userArray.indexOf(elem) == -1;
+									userArray.indexOf(elem) == -1 &&
+									elem != record.owner;
 								if (!isValid) {
 									errors.push({ user: elem, error: doesNotExistError });
 								} else if (!isUnique) {
@@ -358,6 +363,26 @@ const setUserCourses = async (users, courseInfo) => {
 	}
 };
 
+const newPost = (courseInfo, postInfo, done) => {
+	database.get().query(`SELECT * from Course WHERE id=?`, [courseInfo.id], (err, rows) => {
+		if (err) {
+			done({ error: err });
+		} else {
+			const record = rows[0];
+			const posts = JSON.parse(record.posts);
+			posts.push(postInfo);
+			const jsonPosts = JSON.stringify(posts);
+			database.get().query(`UPDATE Course SET posts=? WHERE id=?`, [jsonPosts, courseInfo.id], (error, r) => {
+				if (error) {
+					done({ error });
+				} else {
+					done({ success: "POST_SUCCESS" });
+				}
+			});
+		}
+	});
+}
+
 module.exports = {
 	newCourse,
 	getCourseDetails,
@@ -367,5 +392,6 @@ module.exports = {
 	addAdminToCourse,
 	newUsers,
 	newAdmins,
-	setUserCourses
+	setUserCourses,
+	newPost
 };

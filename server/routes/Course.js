@@ -9,12 +9,14 @@ const {
     addAdminToCourse,
     newUsers,
     newAdmins,
-    setUserCourses
+    setUserCourses,
+    newPost
 } = require('../models/courses/Course');
 const { cantAddOwnerError } = require('../models/courses/errors');
 
 const { requireOwnerPrivilege } = require('./middleware/requireOwnerPrivilege');
 const { requireAdminPrivilege } = require('./middleware/requireAdminPrivilege');
+const { requireUserPrivilege } = require('./middleware/requireUserPrivilege');
 
 module.exports = app => {
 	app.post('/api/new_course', requireLogin, (req, res) => {
@@ -75,7 +77,7 @@ module.exports = app => {
     });
 
     app.post('/api/change_to_user', requireLogin, requireOwnerPrivilege, (req, res) => {
-        const { owner, user, courseInfo } = req.body;
+        const { user, courseInfo } = req.body;
         addUserToCourse(user, courseInfo, (result, error) => {
             if (error) {
                 res.send(error);
@@ -86,7 +88,7 @@ module.exports = app => {
     });
 
     app.post('/api/change_to_admin', requireLogin, requireOwnerPrivilege, (req, res) => {
-        const { owner, user, courseInfo } = req.body;
+        const { user, courseInfo } = req.body;
         addAdminToCourse(user, courseInfo, (result, error) => {
             if (error) {
                 res.send(error);
@@ -97,38 +99,37 @@ module.exports = app => {
     });
 
     app.post('/api/add_as_user', requireAdminPrivilege, (req, res) => {
-        const { owner, users, courseInfo } = req.body;
-        const usersToSend = users.filter((elem, pos) => {
-            return elem != owner;
-        })
-        newUsers(usersToSend, courseInfo, (result, error) => {
+        const { users, courseInfo } = req.body;
+        newUsers(users, courseInfo, (result, error) => {
             if (error) {
                 res.send(error);
             } else {
-                if (users.indexOf(owner) != -1) {
-                    result.errors.push({ user: owner, error: cantAddOwnerError });
-                }
                 setUserCourses(result.validUsers, courseInfo);
                 res.send(result);
             }
         });
     });
 
-    app.post('/api/add_as_admin', requireLogin, requireOwnerPrivilege, (req, res) => {
-        const { owner, users, courseInfo } = req.body;
-        const usersToSend = users.filter((elem, pos) => {
-            return elem != owner;
-        })
-        newAdmins(usersToSend, courseInfo, (result, error) => {
+    app.post('/api/add_as_admin', requireOwnerPrivilege, (req, res) => {
+        const { users, courseInfo } = req.body;
+        newAdmins(users, courseInfo, (result, error) => {
             if (error) {
                 res.send(error);
             } else {
-                if (users.indexOf(owner) != -1) {
-                    result.errors.push({ user: owner, error: cantAddOwnerError });
-                }
                 setUserCourses(result.validUsers, courseInfo);
                 res.send(result);
             }
         });
     });
-};
+
+    app.post('/api/add_post', requireUserPrivilege, (req, res) => {
+        const { courseInfo, sender, postInfo } = req.body;
+        newPost(courseInfo, postInfo, (result => {
+            if (result.error) {
+                res.send(result);
+            } else {
+                res.send(result);
+            }
+        }));
+    });
+}
