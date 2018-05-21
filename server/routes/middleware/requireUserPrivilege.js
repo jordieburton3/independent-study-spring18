@@ -7,7 +7,7 @@ const requireUserPrivilege = (req, res, next) => {
         const record = rows[0];
         const admins = JSON.parse(record.admins);
         const users = JSON.parse(record.users);
-        if (record.owner == sender || admins.includes(sender) || users.include(sender)) {
+        if (record.owner == sender || admins.includes(sender) || users.includes(sender)) {
             next();
         } else {
             res.send({ errors: [noPrivilegeError] });

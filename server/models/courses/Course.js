@@ -383,6 +383,17 @@ const newPost = (courseInfo, postInfo, done) => {
 	});
 }
 
+const getPosts = (courseInfo, done) => {
+	database.get().query(`SELECT * FROM Course WHERE id=?`, [courseInfo.id], (err, rows) => {
+		if (err) {
+			done({ error: err });
+		} else {
+			const record = rows[0];
+			done({ posts: JSON.parse(record.posts) });
+		}
+	})
+}
+
 module.exports = {
 	newCourse,
 	getCourseDetails,
@@ -393,5 +404,6 @@ module.exports = {
 	newUsers,
 	newAdmins,
 	setUserCourses,
-	newPost
+	newPost,
+	getPosts
 };

@@ -5,6 +5,7 @@ import { Login, SignUp, Verify } from './auth';
 import PrivateRoute from './routers';
 import { Courses, CreateCourse, AddUserToCourse } from './courses';
 import Header from './Header/Header';
+import { Posts } from './posts';
 import { checkCredentials } from '../utils';
 
 class App extends React.Component {
@@ -49,6 +50,14 @@ class App extends React.Component {
 						path="/add_users"
 						dispatch={this.props.dispatch}
 						component={AddUserToCourse}
+						signedIn={this.props.token}
+						verified={this.props.verified}
+					/>
+					<PrivateRoute
+						exact
+						path="/posts"
+						dispatch={this.props.dispatch}
+						component={Posts}
 						signedIn={this.props.token}
 						verified={this.props.verified}
 					/>

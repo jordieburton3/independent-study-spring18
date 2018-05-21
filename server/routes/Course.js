@@ -10,7 +10,8 @@ const {
     newUsers,
     newAdmins,
     setUserCourses,
-    newPost
+    newPost,
+    getPosts
 } = require('../models/courses/Course');
 const { cantAddOwnerError } = require('../models/courses/errors');
 
@@ -126,10 +127,21 @@ module.exports = app => {
         const { courseInfo, sender, postInfo } = req.body;
         newPost(courseInfo, postInfo, (result => {
             if (result.error) {
-                res.send(result);
+                res.send({ error: result.error });
             } else {
                 res.send(result);
             }
         }));
     });
+
+    app.post('/api/get_posts', requireUserPrivilege, (req, res) => {
+        const { courseInfo, sender, postInfo } = req.body;
+        getPosts(courseInfo, (result) => {
+            if (result.error) {
+                res.send({ error: result.error });
+            } else {
+                res.send(result);
+            }
+        })
+    })
 }

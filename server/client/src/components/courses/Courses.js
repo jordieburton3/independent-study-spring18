@@ -39,6 +39,7 @@ class Courses extends React.Component {
 			const value = JSON.parse(jsonValue);
 			localStorage.setItem('course', JSON.stringify(value));
 			this.setState({ value: value.title });
+			// console.log(jsonValue);
 			this.props.dispatch(currentCourse(jsonValue));
 		}
 	}
@@ -47,16 +48,19 @@ class Courses extends React.Component {
 		const currCourse = this.props.currentCourse
 			? JSON.parse(this.props.currentCourse.currentCourse)
 			: { title: '' };
+		// console.log("*********");
+		console.log(currCourse);
+		// console.log("***********")
 		return (
 			<div>
 				<form>
-					<select value={currCourse.title} onChange={this.handleChange}>
-						<option disabled defaultValue value="">
+					<select onChange={this.handleChange}>
+						<option selected={!currCourse.title} disabled value="">
 							Select Course
 						</option>
 						<option disabled>Current Course: {currCourse.title}</option>
 						{this.state.courses.map((course, index) => (
-							<option key={index} value={JSON.stringify(course)}>
+							<option selected={course.id === currCourse.id} key={index} value={JSON.stringify(course)}>
 								{course.title}
 							</option>
 						))}

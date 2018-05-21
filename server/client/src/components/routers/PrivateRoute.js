@@ -28,7 +28,7 @@ const PrivateRoute = ({
 	const authed = token && isVerified;
 	const signedInNotVerified = token && !isVerified;
 	//console.log(`The value of authed is ${token}`);
-	console.log(isVerified);
+	//console.log(isVerified);
 	const content = props => (
 		<Route
 			{...rest}
