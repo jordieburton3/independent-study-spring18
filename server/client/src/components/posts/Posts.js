@@ -4,6 +4,8 @@ import Post from './Post';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import NewPostForm from './NewPostForm';
+import SortBy from './SortBy';
+import { sortPostsByDate } from '../../utils';
 
 class Posts extends React.Component {
 	constructor(props) {
@@ -28,6 +30,7 @@ class Posts extends React.Component {
 			};
 			const res = await axios.post('/api/get_posts', payload);
 			const posts = res.data.posts;
+			sortPostsByDate(posts, this.props.sortBy);		
 			this.setState({ posts });
 		}
 	}
@@ -50,7 +53,11 @@ class Posts extends React.Component {
 			};
 			const res = await axios.post('/api/get_posts', payload);
 			const posts = res.data.posts;
+			sortPostsByDate(posts, this.props.sortBy);	
 			this.setState({ posts });
+		} else if (this.props.sortBy !== nextProps.sortBy) {
+			const sortedPosts = sortPostsByDate(this.state.posts, nextProps.sortBy);
+			this.setState({ sortedPosts });
 		}
 	}
 
@@ -58,6 +65,7 @@ class Posts extends React.Component {
 		return (
 			<div>
 				<NewPostForm />
+				<SortBy />
 				{this.state.posts.map((elem, index) => (
 					<Post
 						message={elem.message}
@@ -71,9 +79,10 @@ class Posts extends React.Component {
 	}
 }
 
-const mapStateToProps = ({ currentCourse }) => {
+const mapStateToProps = ({ currentCourse, sortBy }) => {
 	return {
-		currentCourse
+		currentCourse,
+		sortBy
 	};
 };
 
