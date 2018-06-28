@@ -48,9 +48,6 @@ class Courses extends React.Component {
 		const currCourse = this.props.currentCourse
 			? JSON.parse(this.props.currentCourse.currentCourse)
 			: { title: '' };
-		// console.log("*********");
-		console.log(currCourse);
-		// console.log("***********")
 		return (
 			<div>
 				<form>
@@ -60,7 +57,11 @@ class Courses extends React.Component {
 						</option>
 						<option disabled>Current Course: {currCourse.title}</option>
 						{this.state.courses.map((course, index) => (
-							<option selected={course.id === currCourse.id} key={index} value={JSON.stringify(course)}>
+							<option
+								selected={course.id === currCourse.id}
+								key={index}
+								value={JSON.stringify(course)}
+							>
 								{course.title}
 							</option>
 						))}

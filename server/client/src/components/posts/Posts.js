@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import Post from './Post';
+import moment from 'moment';
+import { connect } from 'react-redux';
 import NewPostForm from './NewPostForm';
 
-export default class Posts extends React.Component {
+class Posts extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -30,6 +32,28 @@ export default class Posts extends React.Component {
 		}
 	}
 
+	async shouldComponentUpdate(nextProps) {
+		const rawCourseInfo = localStorage.getItem('course');
+		const parsedCourseInfo = JSON.parse(rawCourseInfo);
+		const currentCourse = this.props.currentCourse
+			? JSON.parse(this.props.currentCourse.currentCourse)
+			: '';
+		if (parsedCourseInfo.id !== currentCourse.id) {
+			const jwt = JSON.parse(localStorage.getItem('jwt'));
+			const user = jwt.user.email;
+			const token = jwt.encoded;
+			const courseInfo = JSON.parse(rawCourseInfo);
+			const payload = {
+				courseInfo,
+				sender: user,
+				token
+			};
+			const res = await axios.post('/api/get_posts', payload);
+			const posts = res.data.posts;
+			this.setState({ posts });
+		}
+	}
+
 	render() {
 		return (
 			<div>
@@ -38,7 +62,7 @@ export default class Posts extends React.Component {
 					<Post
 						message={elem.message}
 						poster={elem.poster}
-						timestamp={elem.timestamp}
+						timestamp={moment(elem.timestamp).format('DD MMM YYYY hh:mm a')}
 						key={index}
 					/>
 				))}
@@ -46,3 +70,11 @@ export default class Posts extends React.Component {
 		);
 	}
 }
+
+const mapStateToProps = ({ currentCourse }) => {
+	return {
+		currentCourse
+	};
+};
+
+export default connect(mapStateToProps)(Posts);

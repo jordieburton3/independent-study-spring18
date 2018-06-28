@@ -33,8 +33,8 @@ export default class NewPostForm extends React.Component {
 					timestamp: moment.now()
 				},
 				token,
-                sender: user,
-                courseInfo
+				sender: user,
+				courseInfo
 			};
 			await axios.post('/api/add_post', payload);
 			window.location.reload();

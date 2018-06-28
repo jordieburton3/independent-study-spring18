@@ -13,6 +13,16 @@ export default class Post extends React.Component {
 		};
 	}
 
+	shouldComponentUpdate(nextProps) {
+		if (nextProps.message !== this.state.message) {
+			this.setState({
+				...nextProps
+			});
+			return true;
+		}
+		return false;
+	}
+
 	render() {
 		return (
 			<div>

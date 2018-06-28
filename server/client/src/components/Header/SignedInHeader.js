@@ -24,9 +24,7 @@ class SignedInHeader extends React.Component {
 				<Link to="/add_users">Add Users</Link>
 				<Link to="/posts">Posts</Link>
 				{/* {current_course ? <p>{ current_course }</p> : null} */}
-				<button onClick={this.signOut}>
-					sign out
-				</button>
+				<button onClick={this.signOut}>sign out</button>
 			</div>
 		);
 	}
