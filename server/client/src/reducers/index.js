@@ -2,6 +2,7 @@ import tokenReducer from './tokenReducer';
 import verifiedReducer from './verifiedReducer';
 import courseReducer from './courseReducer';
 import sortByReducer from './sortByReducer';
+import permissionReducer from './permissionReducer';
 import { combineReducers } from 'redux';
 
 export default () =>
@@ -9,5 +10,6 @@ export default () =>
 		token: tokenReducer,
 		verified: verifiedReducer,
 		currentCourse: courseReducer,
-		sortBy: sortByReducer
+		sortBy: sortByReducer,
+		permission: permissionReducer
 	});

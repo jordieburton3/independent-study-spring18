@@ -39,12 +39,12 @@ class Courses extends React.Component {
 			const value = JSON.parse(jsonValue);
 			localStorage.setItem('course', JSON.stringify(value));
 			this.setState({ value: value.title });
-			// console.log(jsonValue);
 			this.props.dispatch(currentCourse(jsonValue));
 		}
 	}
 
 	render() {
+		
 		const currCourse = this.props.currentCourse
 			? JSON.parse(this.props.currentCourse.currentCourse)
 			: { title: '' };

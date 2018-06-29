@@ -394,6 +394,21 @@ const getPosts = (courseInfo, done) => {
 	})
 }
 
+const getPermission = (user, courseInfo, done) => {
+	database.get().query(`SELECT * FROM Course WHERE id=?`, [courseInfo.id], (err, rows) => {
+        const record = rows[0];
+		const admins = JSON.parse(record.admins);
+		console.log(user);
+        if (record.owner == user) {
+            done({ permission: 'owner'}, undefined);
+        } else if(admins.includes(user)) {
+			done({ permission: 'admin'}, undefined);
+		} else {
+            done({ permission: '' }, undefined);
+        }
+    });
+}
+
 module.exports = {
 	newCourse,
 	getCourseDetails,
@@ -405,5 +420,6 @@ module.exports = {
 	newAdmins,
 	setUserCourses,
 	newPost,
-	getPosts
+	getPosts,
+	getPermission
 };

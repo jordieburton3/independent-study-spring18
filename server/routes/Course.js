@@ -11,7 +11,8 @@ const {
     newAdmins,
     setUserCourses,
     newPost,
-    getPosts
+    getPosts,
+    getPermission
 } = require('../models/courses/Course');
 const { cantAddOwnerError } = require('../models/courses/errors');
 
@@ -140,6 +141,18 @@ module.exports = app => {
             if (result.error) {
                 res.send({ error: result.error });
             } else {
+                res.send(result);
+            }
+        })
+    });
+
+    app.post('/api/get_permission', (req, res) => {
+        const { sender, courseInfo } = req.body;
+        getPermission(sender, courseInfo, (result, err) => {
+            if (err) {
+                res.send(err);
+            } else {
+                console.log(result);
                 res.send(result);
             }
         })

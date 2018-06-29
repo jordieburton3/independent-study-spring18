@@ -37,27 +37,29 @@ class Posts extends React.Component {
 
 	async shouldComponentUpdate(nextProps) {
 		const rawCourseInfo = localStorage.getItem('course');
-		const parsedCourseInfo = JSON.parse(rawCourseInfo);
-		const currentCourse = this.props.currentCourse
-			? JSON.parse(this.props.currentCourse.currentCourse)
-			: '';
-		if (parsedCourseInfo.id !== currentCourse.id) {
-			const jwt = JSON.parse(localStorage.getItem('jwt'));
-			const user = jwt.user.email;
-			const token = jwt.encoded;
-			const courseInfo = JSON.parse(rawCourseInfo);
-			const payload = {
-				courseInfo,
-				sender: user,
-				token
-			};
-			const res = await axios.post('/api/get_posts', payload);
-			const posts = res.data.posts;
-			sortPostsByDate(posts, this.props.sortBy);	
-			this.setState({ posts });
-		} else if (this.props.sortBy !== nextProps.sortBy) {
-			const sortedPosts = sortPostsByDate(this.state.posts, nextProps.sortBy);
-			this.setState({ sortedPosts });
+		if (rawCourseInfo) {
+			const parsedCourseInfo = JSON.parse(rawCourseInfo);
+			const currentCourse = this.props.currentCourse
+				? JSON.parse(this.props.currentCourse.currentCourse)
+				: '';
+			if (parsedCourseInfo.id !== currentCourse.id) {
+				const jwt = JSON.parse(localStorage.getItem('jwt'));
+				const user = jwt.user.email;
+				const token = jwt.encoded;
+				const courseInfo = JSON.parse(rawCourseInfo);
+				const payload = {
+					courseInfo,
+					sender: user,
+					token
+				};
+				const res = await axios.post('/api/get_posts', payload);
+				const posts = res.data.posts;
+				sortPostsByDate(posts, this.props.sortBy);	
+				this.setState({ posts });
+			} else if (this.props.sortBy !== nextProps.sortBy) {
+				const sortedPosts = sortPostsByDate(this.state.posts, nextProps.sortBy);
+				this.setState({ sortedPosts });
+			}
 		}
 	}
 

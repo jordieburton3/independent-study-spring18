@@ -5,6 +5,7 @@ import verified from './verified';
 import notVerified from './notVerified';
 import currentCourse from './currentCourse';
 import newCourse from './newCourse';
+import setPermission from './setPermission';
 
 export {
 	verifyToken,
@@ -13,5 +14,6 @@ export {
 	verified,
 	notVerified,
 	currentCourse,
-	newCourse
+	newCourse,
+	setPermission
 };
